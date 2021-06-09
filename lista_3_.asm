@@ -13,22 +13,15 @@ includelib \masm32\lib\msvcrt.lib
 include \masm32\macros\macros.asm
 
 .data
-  a SDWORD ?
-  b SDWORD ?
+  a SDWORD 2
+  b SDWORD 6
   
 .code
 start:
   
-  printf("Digite o primeiro numero: ")
-  call readint
-  mov a, eax
-
-  printf("Digite o segundo numero: ")
-  call readint
-  mov b, eax
-  
-  cmp a, b
-  jg second
+  mov eax, a
+  cmp eax, b
+  jl second
   printf("A: %d", a)
   jmp fim
 
