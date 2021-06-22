@@ -12,15 +12,19 @@ includelib \masm32\lib\masm32.lib
 includelib \masm32\lib\msvcrt.lib
 
 .data
-  qtdDiscos SDWORD 2
+  qtdDiscos DD ?
+  inputHandle DD 0
   outputHandle DD 0
-  comecoPrint db "["
-  meioPrint db ",", 0H
-  fimPrint db "]", 0AH
-  primeiroNum db 0
-  segundoNum db 0
-  newLine db 0AH
-  consoleCount dd 0
+  inputString DB 5 dup(0)
+  comecoPrint DB "["
+  requestString DB "Digite a quantidade de discos no seu jogo de Torres de Hanoi:", 0H
+  meioPrint DB ","
+  fimPrint DB "]", 0AH
+  tamanhoString DD 0
+  primeiroNum DB 0
+  segundoNum DB 0
+  newLine DB 0AH
+  consoleCount DD 0
 
 .code
 TorredeHanoi:
@@ -94,6 +98,32 @@ start:
   ;Colocando os handles de entrada e saída nas variáveis correspondentes
   invoke GetStdHandle, STD_OUTPUT_HANDLE
   mov outputHandle, eax
+  invoke GetStdHandle, STD_INPUT_HANDLE
+  mov inputHandle, eax
+
+  ;Imprime o pedido para o usuário digitar a quantidade de discos
+  invoke WriteConsole, outputHandle, addr requestString, sizeof requestString, addr consoleCount, NULL
+
+  ;Faz a leitura da quantidade de discos digitada pelo usuário
+  invoke ReadConsole, inputHandle, addr inputString, sizeof inputString, addr consoleCount, NULL
+
+  ;Retira os valores que não são números da inputString
+  mov esi, offset inputString 
+  proximo:
+    mov al, [esi]
+    inc esi
+    cmp al, 48
+    jl terminar
+    cmp al, 58
+    jl proximo
+  terminar:
+    dec esi 
+    xor al, al
+    mov [esi], al
+
+  ;Converte inputString para número e coloca na variável correspondente
+  invoke atodw, addr inputString
+  mov qtdDiscos, eax
   
   push qtdDiscos ;Coloca a quantidade de discos na pilha (1 parâmetro)
   push 1 ;Coloca a torre origem na pilha (Segundo parâmetro)
