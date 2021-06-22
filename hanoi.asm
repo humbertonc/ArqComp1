@@ -13,7 +13,15 @@ includelib \masm32\lib\msvcrt.lib
 include \masm32\macros\macros.asm
 
 .data
-  qtdDiscos SDWORD 3
+  qtdDiscos SDWORD 2
+  outputHandle DD 0
+  comecoPrint db "["
+  meioPrint db ",", 0H
+  fimPrint db "]", 0AH
+  primeiroNum db 0
+  segundoNum db 0
+  newLine db 0AH
+  consoleCount dd 0
 
 .code
 TorredeHanoi:
@@ -37,8 +45,16 @@ TorredeHanoi:
   push DWORD PTR [ebp+12]
   call TorredeHanoi
 
+  ;Converte o número da torre origem e torre destino para string
+  invoke dwtoa, DWORD PTR [ebp+16], addr primeiroNum
+  invoke dwtoa, DWORD PTR [ebp+12], addr segundoNum
+
   ;Imprime o movimento da torre origem para a torre destino
-  printf("[%d, %d]\n", DWORD PTR [ebp+16], DWORD PTR [ebp+12])
+  invoke WriteConsole, outputHandle, addr comecoPrint, sizeof comecoPrint, addr consoleCount, NULL
+  invoke WriteConsole, outputHandle, addr primeiroNum, sizeof primeiroNum, addr consoleCount, NULL
+  invoke WriteConsole, outputHandle, addr meioPrint, sizeof meioPrint, addr consoleCount, NULL
+  invoke WriteConsole, outputHandle, addr segundoNum, sizeof segundoNum, addr consoleCount, NULL
+  invoke WriteConsole, outputHandle, addr fimPrint, sizeof fimPrint, addr consoleCount, NULL
 
   ;Chama a função de novo, colocando a torre auxiliar recebida como de origem,
   ;a de origem recebida como de destino, e a de destino recebida como auxiliar
@@ -56,8 +72,16 @@ TorredeHanoi:
   
   IgualUm:
 
+  ;Converte o número da torre origem e torre destino para string
+  invoke dwtoa, DWORD PTR [ebp+16], addr primeiroNum
+  invoke dwtoa, DWORD PTR [ebp+12], addr segundoNum
+
   ;Imprime o movimento da torre origem para a torre destino
-  printf("[%d, %d]\n", DWORD PTR [ebp+16], DWORD PTR [ebp+12])
+  invoke WriteConsole, outputHandle, addr comecoPrint, sizeof comecoPrint, addr consoleCount, NULL
+  invoke WriteConsole, outputHandle, addr primeiroNum, sizeof primeiroNum, addr consoleCount, NULL
+  invoke WriteConsole, outputHandle, addr meioPrint, sizeof meioPrint, addr consoleCount, NULL
+  invoke WriteConsole, outputHandle, addr segundoNum, sizeof segundoNum, addr consoleCount, NULL
+  invoke WriteConsole, outputHandle, addr fimPrint, sizeof fimPrint, addr consoleCount, NULL
 
   ;Epílogo da função
   ;Como a função não possui variáveis locais, esp já está no mesmo local que ebp
@@ -67,6 +91,12 @@ TorredeHanoi:
   ret 16
   
 start:
+
+  ;Colocando os handles de entrada e saída nas variáveis correspondentes
+  invoke GetStdHandle, STD_OUTPUT_HANDLE
+  mov outputHandle, eax
+  invoke GetStdHandle, STD_INPUT_HANDLE
+  mov inputHandle, eax
   
   push qtdDiscos ;Coloca a quantidade de discos na pilha (1 parâmetro)
   push 1 ;Coloca a torre origem na pilha (Segundo parâmetro)
