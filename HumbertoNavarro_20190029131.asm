@@ -5,19 +5,17 @@ option casemap :none
 include \masm32\include\windows.inc
 include \masm32\include\kernel32.inc
 include \masm32\include\masm32.inc
-include \masm32\include\msvcrt.inc
 includelib \masm32\lib\kernel32.lib
 includelib \masm32\lib\user32.lib
 includelib \masm32\lib\masm32.lib
-includelib \masm32\lib\msvcrt.lib
 
 .data
   qtdDiscos DD ?
   inputHandle DD 0
   outputHandle DD 0
   inputString DB 5 dup(0)
-  comecoPrint DB "["
   requestString DB "Digite a quantidade de discos no seu jogo de Torres de Hanoi:", 0H
+  comecoPrint DB "["
   meioPrint DB ","
   fimPrint DB "]", 0AH
   tamanhoString DD 0
@@ -125,7 +123,7 @@ start:
   invoke atodw, addr inputString
   mov qtdDiscos, eax
   
-  push qtdDiscos ;Coloca a quantidade de discos na pilha (1 parâmetro)
+  push qtdDiscos ;Coloca a quantidade de discos na pilha (Primeiro parâmetro)
   push 1 ;Coloca a torre origem na pilha (Segundo parâmetro)
   push 3 ;Coloca a torre destino na pilha (Terceiro parâmetro)
   push 2 ;Coloca a torre auxiliar na pilha (Quarto parâmetro)
